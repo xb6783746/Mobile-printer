@@ -169,6 +169,8 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
         screen.hideOptions();
         screen.showSeekBar(false);
 
+        screen.setImage(current);
+
         currentState = null;
     }
 

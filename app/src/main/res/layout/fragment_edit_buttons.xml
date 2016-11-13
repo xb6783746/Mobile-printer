@@ -8,28 +8,30 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="40dp"
+        android:gravity="center">
 
         <Button
-            android:text="Ярк"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/brightnessButton"
-            android:layout_weight="1" />
+            android:background="@drawable/ic_brightness_5_black_48dp"
+            android:layout_marginRight="10dp" />
 
         <Button
-            android:text="КОН"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/contrastButton"
-            android:layout_weight="1" />
+            android:background="@drawable/ic_brightness_6_black_48dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"/>
 
         <Button
-            android:text="Нас"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/saturationButton"
-            android:layout_weight="1" />
+            android:background="@drawable/ic_brightness_7_black_48dp"
+            android:layout_marginLeft="10dp"/>
     </LinearLayout>
 
 </FrameLayout>
