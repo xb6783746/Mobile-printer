@@ -1,6 +1,6 @@
 package com.mobileprinter.View.EditScreen;
 
-import android.app.Activity;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -8,31 +8,32 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
+import android.support.annotation.Nullable;
+import android.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import com.mobileprinter.Presenter.EditScreen.ImageEditorPresenterImpl;
+
 import com.mobileprinter.Interfaces.ImageEditorPresenter;
 import com.mobileprinter.Interfaces.ImageEditorScreen;
 import com.mobileprinter.R;
 
-import java.io.DataOutput;
-import java.io.OutputStream;
-import java.math.MathContext;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
 import java.util.List;
 
-public class ImageEditorActivity extends Activity implements ImageEditorScreen {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class ImageEditorView extends Fragment implements ImageEditorScreen{
+
+    public ImageEditorView() {
+        // Required empty public constructor
+    }
 
 
     private final int OPEN_GALLERY = 376;
@@ -59,10 +60,18 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
     private ImageEditorPresenter presenter;
 
+    public void setPresenter(ImageEditorPresenter presenter){
+        this.presenter = presenter;
+    }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_editor);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_image_editor_view, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
@@ -70,16 +79,26 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
         circlePaint = new Paint();
 
-        initControls();
+        initControls(view);
 
-        presenter = new ImageEditorPresenterImpl(this, this);
+        //presenter = new ImageEditorPresenterImpl(this, this);
 
         seekBar.setVisibility(View.INVISIBLE);
     }
 
-    private void initControls() {
+    private void initControls(View where) {
 
-        seekBar = seekBarInit();
+        seekBar = seekBarInit(where);
+
+        Button openB = (Button)where.findViewById(R.id.openButton);
+        openB.setOnClickListener((x) -> openGallery(x));
+        Button editB = (Button)where.findViewById(R.id.editButton);
+        editB.setOnClickListener((x) -> editButtonClick(x));
+        Button cutB = (Button)where.findViewById(R.id.cutButton);
+        cutB.setOnClickListener((x) -> cutButtonClick(x));
+        Button printB = (Button)where.findViewById(R.id.printButton);
+        printB.setOnClickListener((x) -> printButtonClick(x));
+
 
         optionButtonsFragment = new EditButtonsFragment();
         optionButtonsFragment.onBrightnessButtonClick((x) -> brightnessButtonClick(x));
@@ -90,7 +109,7 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
         acceptCancelButtonsFragment.onAcceptButtonClick((x) -> acceptButtonClick(x));
         acceptCancelButtonsFragment.onCancelButtonClick((x) -> cancelButtonClick(x));
 
-        imageView = imageViewInit();
+        imageView = imageViewInit(where);
 
     }
 
@@ -98,7 +117,7 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
     public void showEditButtons() {
         hideOptions();
 
-        getFragmentManager()
+        getChildFragmentManager()
                 .beginTransaction()
                 .add(R.id.imageEditButtons, optionButtonsFragment)
                 .commit();
@@ -109,7 +128,7 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
         hideOptions();
 
-        getFragmentManager()
+        getChildFragmentManager()
                 .beginTransaction()
                 .add(R.id.imageEditButtons, acceptCancelButtonsFragment)
                 .commit();
@@ -118,7 +137,7 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
     @Override
     public void hideOptions() {
 
-        getFragmentManager()
+        getChildFragmentManager()
                 .beginTransaction()
                 .remove(acceptCancelButtonsFragment)
                 .remove(optionButtonsFragment)
@@ -209,7 +228,6 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
 
     public void openGallery(View view) {
-        //presenter.openImageGallery();
 
         Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         pickIntent.setType("image/*");
@@ -218,14 +236,6 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
     }
     public void editButtonClick(View view) {
 
-        //editButtons.setVisibility(View.VISIBLE);
-        //View tmp = infla
-
-        //Fragment fragment = new EditButtonsFragment();
-
-        //getFragmentManager().beginTransaction().add(R.id.imageEditButtons, fragment, "123").commit();
-
-        //showAcceptButton();
         presenter.editButtonClick();
     }
     public void cutButtonClick(View view) {
@@ -255,7 +265,7 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == OPEN_GALLERY) {
             presenter.loadImage(data.getData());
         }
@@ -339,8 +349,8 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
         );
     }
 
-    private ImageView imageViewInit(){
-        ImageView res = (ImageView) findViewById(R.id.imageView);
+    private ImageView imageViewInit(View where){
+        ImageView res = (ImageView)where.findViewById(R.id.imageView);
 
 
         res.setOnTouchListener(new View.OnTouchListener() {
@@ -371,8 +381,8 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
         return res;
     }
-    private SeekBar seekBarInit(){
-        SeekBar res = (SeekBar) findViewById(R.id.seekBar);
+    private SeekBar seekBarInit(View where){
+        SeekBar res = (SeekBar)where.findViewById(R.id.seekBar);
 
         res.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
@@ -397,5 +407,10 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
         return res;
     }
+
+
+
+
+
 
 }

@@ -6,8 +6,11 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.provider.MediaStore;
+
+import com.mobileprinter.Interfaces.EditScreenRouter;
 import com.mobileprinter.Interfaces.ImageEditorPresenter;
 import com.mobileprinter.Interfaces.ImageEditorScreen;
+import com.mobileprinter.Interfaces.ScreenHost;
 import com.mobileprinter.Presenter.EditScreen.States.BaseState;
 import com.mobileprinter.Presenter.EditScreen.States.ImageCutter;
 import com.mobileprinter.Presenter.EditScreen.States.ImageEditor;
@@ -22,13 +25,19 @@ import java.util.HashMap;
 
 public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
 
+    @Override
+    public void start() {
+
+    }
+
     enum State{
         Editor, Cutter, None
     }
 
-    public ImageEditorPresenterImpl(ImageEditorScreen screen, Context context) {
+    public ImageEditorPresenterImpl(ImageEditorScreen screen, Context context, EditScreenRouter router) {
         this.screen = screen;
         this.context = context;
+        this.router = router;
 
         states = new HashMap<>();
 
@@ -51,6 +60,7 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
     private BaseState currentState;
     private State currentStateType;
     private Bitmap current;
+    private EditScreenRouter router;
 
     @Override
     public void loadImage(Uri uri) {
@@ -97,7 +107,7 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
     }
     @Override
     public void printButtonClick() {
-        reset();
+        //reset();
     }
 
     @Override

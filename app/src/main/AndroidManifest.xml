@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".View.EditScreen.ImageEditorActivity">
+        <activity android:name=".View.Host.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

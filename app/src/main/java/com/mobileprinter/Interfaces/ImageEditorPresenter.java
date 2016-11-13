@@ -8,7 +8,7 @@ import android.net.Uri;
  * Created by Влад on 08.11.2016.
  */
 
-public interface ImageEditorPresenter {
+public interface ImageEditorPresenter extends Presenter{
 
     void loadImage(Uri uri);
     void editButtonClick();
