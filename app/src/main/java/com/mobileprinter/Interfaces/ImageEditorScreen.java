@@ -25,6 +25,7 @@ public interface ImageEditorScreen {
 
     void hideRect();
 
-    int getImageViewWidth();
-    int getImageViewHeight();
+    int getImageWidth();
+    int getImageHeight();
+    float getScale();
 }

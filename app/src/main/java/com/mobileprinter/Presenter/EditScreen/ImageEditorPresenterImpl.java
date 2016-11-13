@@ -23,7 +23,7 @@ import java.util.HashMap;
 public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
 
     enum State{
-        Editor, Cutter
+        Editor, Cutter, None
     }
     public ImageEditorPresenterImpl(ImageEditorScreen screen, Context context) {
         this.screen = screen;
@@ -31,7 +31,7 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
 
         states = new HashMap<>();
 
-        ImageCutter cutter = new ImageCutter(screen, new Rect(0, 0, screen.getImageViewWidth(), screen.getImageViewHeight()), this);
+        ImageCutter cutter = new ImageCutter(screen, this);
         ImageEditor editor = new ImageEditor(screen, this);
 
         states.put(
@@ -48,9 +48,8 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
     private Context context;
     private HashMap<State, BaseState> states;
     private BaseState currentState;
+    private State currentStateType;
     private Bitmap current;
-
-    private Rect imageRect;
 
     @Override
     public void loadImage(Uri uri) {
@@ -66,7 +65,6 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
 
             screen.setImage(b);
 
-            imageRect = screen.getImageRect();
 
             for(BaseState state : states.values()){
                 state.update(current);
@@ -78,17 +76,23 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
 
     @Override
     public void editButtonClick() {
+        if(currentStateType == State.Editor){
+            return;
+        }
+
         reset();
 
-        currentState = states.get(State.Editor);
-        currentState.start();
+        switchState(State.Editor);
     }
     @Override
     public void cutButtonClick() {
+        if(currentStateType == State.Cutter){
+            return;
+        }
+
         reset();
 
-        currentState = states.get(State.Cutter);
-        currentState.start();
+        switchState(State.Cutter);
     }
     @Override
     public void printButtonClick() {
@@ -172,6 +176,7 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
         screen.setImage(current);
 
         currentState = null;
+        currentStateType = State.None;
     }
 
     private Point transform(Point screenPoint){
@@ -181,6 +186,13 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
     @Override
     public void close() {
         reset();
+    }
+
+    private void switchState(State state){
+        currentStateType = state;
+        currentState = states.get(state);
+
+        currentState.start();
     }
 
 }

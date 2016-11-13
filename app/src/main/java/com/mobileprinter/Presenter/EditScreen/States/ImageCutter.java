@@ -25,11 +25,10 @@ public class ImageCutter extends BaseState{
         Left, Right, Top, Bottom, Full, None
     }
 
-    public ImageCutter(ImageEditorScreen screen, Rect fullArea, Owner owner) {
+    public ImageCutter(ImageEditorScreen screen, Owner owner) {
         super(owner);
 
         this.screen = screen;
-        this.area = fullArea;
 
         sides = new Side[]{Side.Left, Side.Right, Side.Top, Side.Bottom};
     }
@@ -40,11 +39,6 @@ public class ImageCutter extends BaseState{
     private Side side;
     private Point last;
     private Side[] sides;
-
-    public void setRect(Rect rect){
-
-        this.area = rect;
-    }
 
     @Override
     public void touch(int x, int y){
@@ -75,22 +69,22 @@ public class ImageCutter extends BaseState{
 
         switch (side){
             case Top:
-                if(area.top + deltaY >= 0) {
+                if(area.top + deltaY >= 0 && area.top + deltaY < area.bottom) {
                     area.top += deltaY;
                 }
                 break;
             case Left:
-                if(area.left + deltaX >= 0) {
+                if(area.left + deltaX >= 0 && area.left + deltaX < area.right) {
                     area.left += deltaX;
                 }
                 break;
             case Right:
-                if(area.right + deltaX <= fullArea.right) {
+                if(area.right + deltaX <= fullArea.right && area.right + deltaX > area.left) {
                     area.right += deltaX;
                 }
                 break;
             case Bottom:
-                if(area.bottom + deltaY <= fullArea.bottom) {
+                if(area.bottom + deltaY <= fullArea.bottom && area.bottom + deltaY > area.top) {
                     area.bottom += deltaY;
                 }
                 break;
@@ -114,6 +108,7 @@ public class ImageCutter extends BaseState{
 
         screen.showOptionButtons();
 
+        area = new Rect(fullArea);
         drawRect();
     }
 
@@ -121,8 +116,8 @@ public class ImageCutter extends BaseState{
     public void update(Bitmap b) {
         this.current = b;
 
-        area = new Rect(0, 0, b.getWidth(), b.getHeight());
-        fullArea = new Rect(0, 0, b.getWidth(), b.getHeight());
+        area = new Rect(0, 0, screen.getImageWidth(),  screen.getImageHeight());
+        fullArea = new Rect(0, 0, screen.getImageWidth(),  screen.getImageHeight());
     }
 
     @Override
@@ -133,18 +128,15 @@ public class ImageCutter extends BaseState{
     @Override
     public Bitmap apply(Bitmap b) {
 
-        int width = area.right-area.left;
+        float scale = screen.getScale();
 
-        if(area.left + width > b.getWidth()){
-            width = b.getWidth() - area.left;
-        }
+        int width = Math.round((area.right-area.left) / scale);
+        int height = Math.round((area.bottom-area.top)/scale);
 
-        int height = area.bottom-area.top;
-        if(area.top + height > b.getHeight()){
-            height = b.getHeight() - area.top;
-        }
+        int x = Math.round(area.left/scale);
+        int y = Math.round(area.top/scale);
 
-        return Bitmap.createBitmap(b, area.left, area.top, width, height);
+        return Bitmap.createBitmap(b, x, y, width, height);
     }
 
     @Override
@@ -186,7 +178,7 @@ public class ImageCutter extends BaseState{
 
         for(int i = 0; i < sides.length && !ok; i++){
 
-            ok = near(p, getSide(sides[i], area), 300f);
+            ok = near(p, getSide(sides[i], area), 30f);
             if(ok){
                 res = sides[i];
             }

@@ -28,11 +28,10 @@ public class ImageEditor extends BaseState {
     private float brightness = 0, contrast = 5, saturation;
     private Edit type;
     private Bitmap tmp;
-    private int brightnessStart = -255, brightnessEnd = 255;
-    private int contrastStart = 0, contrastEnd = 2;
-    private int satStart = 0, satEnd = 2;
+    private final int brightnessStart = -255, brightnessEnd = 255;
+    private final int contrastStart = 0, contrastEnd = 2;
+    private final int satStart = 0, satEnd = 2;
 
-    private Matrix matrix;
     private Canvas canvas;
     Paint paint = new Paint();
 
@@ -43,7 +42,6 @@ public class ImageEditor extends BaseState {
         screen.showEditButtons();
         type = Edit.None;
     }
-
     @Override
     public void update(Bitmap b) {
         if(tmp != null){
@@ -70,10 +68,8 @@ public class ImageEditor extends BaseState {
     @Override
     public Bitmap apply(Bitmap b) {
 
-        Bitmap res = Bitmap.createBitmap(tmp);
-        //tmp.recycle();
+        return Bitmap.createBitmap(tmp);
 
-        return res;
     }
 
     @Override
@@ -99,7 +95,6 @@ public class ImageEditor extends BaseState {
         screen.showSeekBar(false);
         screen.showEditButtons();
     }
-
     @Override
     public void cancelButtonClick() {
         screen.showSeekBar(false);
@@ -116,7 +111,6 @@ public class ImageEditor extends BaseState {
     public void release(int x, int y) {
 
     }
-
     @Override
     public void move(Point to) {
 
@@ -198,7 +192,7 @@ public class ImageEditor extends BaseState {
         screen.setImage(tmp);
     }
 
-    private int getProgress(Edit type){
+    private int getProgress(Edit type){ //!!!
 
         int start = 0, end = 0;
         float current = 0;

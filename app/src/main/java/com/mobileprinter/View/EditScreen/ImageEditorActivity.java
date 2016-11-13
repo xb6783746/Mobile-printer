@@ -36,6 +36,8 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
 
     private final int OPEN_GALLERY = 376;
+    private final int lineWidth = 5;
+    private final int circleRad = 15;
 
     private LinearLayout mainButtons;
     private FrameLayout optionLayout;
@@ -51,9 +53,11 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
     private Bitmap tmp;
     private Point topLeft;
     private Paint paint;
+    private Paint circlePaint;
 
     private int width, height;
     private float scaleX, scaleY;
+    private int currentRad;
 
     private ImageEditorPresenter presenter;
 
@@ -64,7 +68,9 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
         paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(30);
+        paint.setStrokeWidth(lineWidth);
+
+        circlePaint = new Paint();
 
         initControls();
 
@@ -207,6 +213,8 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
         scaleX = f[Matrix.MSCALE_X];
         scaleY = f[Matrix.MSCALE_Y];
 
+        paint.setStrokeWidth(Math.round(lineWidth/scaleX));
+        currentRad = Math.round(circleRad/scaleX);
     }
 
     @Override
@@ -220,15 +228,17 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
         Canvas canvas = new Canvas(tmp);
 
         canvas.drawBitmap(current, new Matrix(), null);
-        canvas.drawRect(rect, paint);
+        canvas.drawRect(toImageCoordinates(rect), paint);
 
         for (Point point : dots) {
 
+            Point nP = toImageCoordinates(point);
+
             canvas.drawCircle(
-                    point.x,
-                    point.y,
-                    30,
-                    paint
+                    nP.x,
+                    nP.y,
+                    currentRad,
+                    circlePaint
             );
         }
 
@@ -241,14 +251,20 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
     }
 
     @Override
-    public int getImageViewWidth() {
-        return width;
+    public int getImageWidth() {
+        return Math.round(current.getWidth()*scaleX);
     }
 
     @Override
-    public int getImageViewHeight() {
-        return height;
+    public int getImageHeight() {
+        return Math.round(current.getHeight()*scaleY);
     }
+
+    @Override
+    public float getScale() {
+        return scaleX;
+    }
+
 
     public void openGallery(View view) {
         //presenter.openImageGallery();
@@ -283,19 +299,15 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
     public void cancelButtonClick(View view) {
         presenter.cancelButtonClick();
     }
-
     public void seekBarChanged(int progress) {
         presenter.seekBarChanged(progress);
     }
-
     public void brightnessButtonClick(View view) {
         presenter.brightnessButtonClick();
     }
-
     public void contrastButtonClick(View view) {
         presenter.contrastButtonClick();
     }
-
     public void saturationButtonClick(View view) {
         presenter.saturationButtonClick();
     }
@@ -307,29 +319,29 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
             presenter.loadImage(data.getData());
         }
     }
-
-    public int[] getBitmapOffset(Boolean includeLayout) {
-        int[] offset = new int[2];
-        float[] values = new float[9];
-
-        Matrix m = imageView.getImageMatrix();
-        m.getValues(values);
-
-        offset[0] = (int) values[5];
-        offset[1] = (int) values[2];
-
-        if (includeLayout) {
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) imageView.getLayoutParams();
-
-            int paddingTop = (int) (imageView.getPaddingTop());
-            int paddingLeft = (int) (imageView.getPaddingLeft());
-
-            offset[0] += paddingTop + lp.topMargin;
-            offset[1] += paddingLeft + lp.leftMargin;
-        }
-
-        return offset;
-    }
+//
+//    public int[] getBitmapOffset(Boolean includeLayout) {
+//        int[] offset = new int[2];
+//        float[] values = new float[9];
+//
+//        Matrix m = imageView.getImageMatrix();
+//        m.getValues(values);
+//
+//        offset[0] = (int) values[5];
+//        offset[1] = (int) values[2];
+//
+//        if (includeLayout) {
+//            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) imageView.getLayoutParams();
+//
+//            int paddingTop = (int) (imageView.getPaddingTop());
+//            int paddingLeft = (int) (imageView.getPaddingLeft());
+//
+//            offset[0] += paddingTop + lp.topMargin;
+//            offset[1] += paddingLeft + lp.leftMargin;
+//        }
+//
+//        return offset;
+//    }
 
     public Rect getBitmapPositionInsideImageView(ImageView imageView) {
         int[] ret = new int[4];
@@ -379,17 +391,34 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
     private Point transformPoint(Point origin) {
         return new Point(
-                Math.round((origin.x - topLeft.x) / scaleX),
-                Math.round((origin.y - topLeft.y) / scaleY)
+                origin.x - topLeft.x,
+                origin.y - topLeft.y
         );
     }
     private Rect transformRect(Rect rect){
 
         return new Rect(
-                Math.round((rect.left - topLeft.x) / scaleX),
-                Math.round((rect.top - topLeft.y) / scaleY),
-                Math.round((rect.right - topLeft.x) / scaleX),
-                Math.round((rect.bottom - topLeft.y) / scaleY)
+                rect.left - topLeft.x,
+                rect.top - topLeft.y,
+                rect.right - topLeft.x,
+                rect.bottom - topLeft.y
+        );
+    }
+
+    private Rect toImageCoordinates(Rect rect){
+
+        return new Rect(
+                Math.round(rect.left/scaleX),
+                Math.round(rect.top/scaleY),
+                Math.round(rect.right/scaleX),
+                Math.round(rect.bottom/scaleY)
+        );
+    }
+    private Point toImageCoordinates(Point point){
+
+        return new Point(
+                Math.round(point.x/scaleX),
+                Math.round(point.y/scaleY)
         );
     }
 
