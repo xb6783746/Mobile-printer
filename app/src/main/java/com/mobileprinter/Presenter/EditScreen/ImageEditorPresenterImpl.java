@@ -25,6 +25,7 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
     enum State{
         Editor, Cutter, None
     }
+
     public ImageEditorPresenterImpl(ImageEditorScreen screen, Context context) {
         this.screen = screen;
         this.context = context;
@@ -65,10 +66,10 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
 
             screen.setImage(b);
 
-
             for(BaseState state : states.values()){
                 state.update(current);
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -98,7 +99,6 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
     public void printButtonClick() {
         reset();
     }
-
 
     @Override
     public void acceptButtonClick() {
@@ -179,10 +179,6 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
         currentStateType = State.None;
     }
 
-    private Point transform(Point screenPoint){
-
-        return new Point();
-    }
     @Override
     public void close() {
         reset();

@@ -39,9 +39,6 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
     private final int lineWidth = 5;
     private final int circleRad = 15;
 
-    private LinearLayout mainButtons;
-    private FrameLayout optionLayout;
-
     private SeekBar seekBar;
 
     private EditButtonsFragment optionButtonsFragment;
@@ -51,11 +48,12 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
     private Bitmap current;
     private Bitmap tmp;
+
     private Point topLeft;
+
     private Paint paint;
     private Paint circlePaint;
 
-    private int width, height;
     private float scaleX, scaleY;
     private int currentRad;
 
@@ -76,107 +74,55 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
         presenter = new ImageEditorPresenterImpl(this, this);
 
-        //editButtons.setVisibility(View.INVISIBLE);
         seekBar.setVisibility(View.INVISIBLE);
     }
 
     private void initControls() {
 
-        mainButtons = (LinearLayout) findViewById(R.id.mainButtons);
-        optionLayout = (FrameLayout) findViewById(R.id.imageEditButtons);
-
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
-        seekBar.setOnSeekBarChangeListener(
-                new SeekBar.OnSeekBarChangeListener() {
-
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        seekBarChanged(progress);
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-                }
-
-        );
+        seekBar = seekBarInit();
 
         optionButtonsFragment = new EditButtonsFragment();
+        optionButtonsFragment.onBrightnessButtonClick((x) -> brightnessButtonClick(x));
+        optionButtonsFragment.onContrastButtonClick((x) -> contrastButtonClick(x));
+        optionButtonsFragment.onSaturationButtonClick((x) -> saturationButtonClick(x));
 
         acceptCancelButtonsFragment = new OptionButtonFragment();
+        acceptCancelButtonsFragment.onAcceptButtonClick((x) -> acceptButtonClick(x));
+        acceptCancelButtonsFragment.onCancelButtonClick((x) -> cancelButtonClick(x));
 
-        imageView = (ImageView) findViewById(R.id.imageView);
-        imageView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+        imageView = imageViewInit();
 
-                int x = Math.round(event.getX());
-                int y = Math.round(event.getY());
-
-                Point image = transformPoint(new Point(x, y));
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        presenter.touch(image.x, image.y);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        presenter.release(image.x, image.y);
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        presenter.move(image);
-                        break;
-
-                }
-
-                return true;
-            }
-        });
-
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        width = imageView.getWidth();
-        height = imageView.getHeight();
     }
 
     @Override
     public void showEditButtons() {
-        //optionLayout.removeAllViews();
-
         hideOptions();
 
-        getFragmentManager().beginTransaction().add(R.id.imageEditButtons, optionButtonsFragment).commit();
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.imageEditButtons, optionButtonsFragment)
+                .commit();
 
-        optionButtonsFragment.onBrightnessButtonClick((x) -> brightnessButtonClick(x));
-        optionButtonsFragment.onContrastButtonClick((x) -> contrastButtonClick(x));
-        optionButtonsFragment.onSaturationButtonClick((x) -> saturationButtonClick(x));
     }
-
     @Override
     public void showOptionButtons() {
 
-        //optionLayout.removeAllViews();
         hideOptions();
 
-        getFragmentManager().beginTransaction().add(R.id.imageEditButtons, acceptCancelButtonsFragment).commit();
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.imageEditButtons, acceptCancelButtonsFragment)
+                .commit();
 
-        acceptCancelButtonsFragment.onAcceptButtonClick((x) -> acceptButtonClick(x));
-        acceptCancelButtonsFragment.onCancelButtonClick((x) -> cancelButtonClick(x));
     }
-
     @Override
     public void hideOptions() {
-        //optionLayout.removeAllViews();
-        getFragmentManager().beginTransaction().remove(acceptCancelButtonsFragment).remove(optionButtonsFragment).commit();
+
+        getFragmentManager()
+                .beginTransaction()
+                .remove(acceptCancelButtonsFragment)
+                .remove(optionButtonsFragment)
+                .commit();
     }
 
     @Override
@@ -186,12 +132,10 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
         seekBar.setVisibility(v);
     }
-
     @Override
     public void setSeekBar(int progress) {
         seekBar.setProgress(progress);
     }
-
 
     @Override
     public void setImage(Bitmap b) {
@@ -244,7 +188,6 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
         imageView.setImageBitmap(tmp);
     }
-
     @Override
     public void hideRect() {
         imageView.setImageBitmap(current);
@@ -254,7 +197,6 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
     public int getImageWidth() {
         return Math.round(current.getWidth()*scaleX);
     }
-
     @Override
     public int getImageHeight() {
         return Math.round(current.getHeight()*scaleY);
@@ -312,36 +254,12 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
         presenter.saturationButtonClick();
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == OPEN_GALLERY) {
             presenter.loadImage(data.getData());
         }
     }
-//
-//    public int[] getBitmapOffset(Boolean includeLayout) {
-//        int[] offset = new int[2];
-//        float[] values = new float[9];
-//
-//        Matrix m = imageView.getImageMatrix();
-//        m.getValues(values);
-//
-//        offset[0] = (int) values[5];
-//        offset[1] = (int) values[2];
-//
-//        if (includeLayout) {
-//            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) imageView.getLayoutParams();
-//
-//            int paddingTop = (int) (imageView.getPaddingTop());
-//            int paddingLeft = (int) (imageView.getPaddingLeft());
-//
-//            offset[0] += paddingTop + lp.topMargin;
-//            offset[1] += paddingLeft + lp.leftMargin;
-//        }
-//
-//        return offset;
-//    }
 
     public Rect getBitmapPositionInsideImageView(ImageView imageView) {
         int[] ret = new int[4];
@@ -404,7 +322,6 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
                 rect.bottom - topLeft.y
         );
     }
-
     private Rect toImageCoordinates(Rect rect){
 
         return new Rect(
@@ -420,6 +337,64 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
                 Math.round(point.x/scaleX),
                 Math.round(point.y/scaleY)
         );
+    }
+
+    private ImageView imageViewInit(){
+        ImageView res = (ImageView) findViewById(R.id.imageView);
+        
+        res.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                int x = Math.round(event.getX());
+                int y = Math.round(event.getY());
+
+                Point image = transformPoint(new Point(x, y));
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        presenter.touch(image.x, image.y);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        presenter.release(image.x, image.y);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        presenter.move(image);
+                        break;
+
+                }
+
+                return true;
+            }
+        });
+
+        return res;
+    }
+    private SeekBar seekBarInit(){
+        SeekBar res = (SeekBar) findViewById(R.id.seekBar);
+
+        res.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        seekBarChanged(progress);
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+                }
+
+        );
+
+        return res;
     }
 
 }

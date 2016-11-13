@@ -174,13 +174,11 @@ public class ImageCutter extends BaseState{
         Point p = new Point(x, y);
         Side res = Side.None;
 
-        Boolean ok = false;
+        for(int i = 0; i < sides.length; i++){
 
-        for(int i = 0; i < sides.length && !ok; i++){
-
-            ok = near(p, getSide(sides[i], area), 30f);
-            if(ok){
+            if(near(p, getSide(sides[i], area), 30f)){
                 res = sides[i];
+                break;
             }
         }
 
@@ -190,6 +188,7 @@ public class ImageCutter extends BaseState{
 
         return res;
     }
+
     @NonNull
     private Boolean near(Point p1, Point p2, float area){
 
@@ -232,6 +231,7 @@ public class ImageCutter extends BaseState{
 
         return res;
     }
+
     private void drawRect(){
         screen.drawRect(area, allSides());
     }
