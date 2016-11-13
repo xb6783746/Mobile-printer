@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 
 import com.mobileprinter.Interfaces.EditScreenRouter;
 import com.mobileprinter.Interfaces.ScreenHost;
+import com.mobileprinter.Presenter.DitherScreen.DitherScreenPresenterImpl;
+import com.mobileprinter.View.DitherScreen.DitherView;
 
 /**
  * Created by Влад on 13.11.2016.
@@ -25,6 +27,14 @@ public class EditScreenRouterImpl implements EditScreenRouter{
 
     @Override
     public void openDitheringScreen(Bitmap image) {
+
+        DitherView view = new DitherView();
+        DitherScreenPresenterImpl presenter = new DitherScreenPresenterImpl(view, null, image);
+
+        view.setPresenter(presenter);
+
+        host.attach(view);
+        //presenter.start();
 
     }
 }

@@ -108,6 +108,8 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
     @Override
     public void printButtonClick() {
         //reset();
+
+        router.openDitheringScreen(current);
     }
 
     @Override

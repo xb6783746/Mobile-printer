@@ -4,7 +4,7 @@ package com.mobileprinter.View.DitherScreen;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +29,10 @@ public class DitherView extends Fragment implements DitherScreen{
     private DitherScreenPresenter presenter;
     private ImageView imageView;
 
+    public void setPresenter(DitherScreenPresenter presenter) {
+        this.presenter = presenter;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -39,6 +43,10 @@ public class DitherView extends Fragment implements DitherScreen{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        initControls(view);
+
+        presenter.created();
     }
 
 
@@ -59,7 +67,6 @@ public class DitherView extends Fragment implements DitherScreen{
         imageView = (ImageView)view.findViewById(R.id.ditherImageView);
 
     }
-
 
     private void floydSteinbergDithering(){
         presenter.floydSteinbergDithering();
