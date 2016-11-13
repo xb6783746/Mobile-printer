@@ -341,7 +341,8 @@ public class ImageEditorActivity extends Activity implements ImageEditorScreen {
 
     private ImageView imageViewInit(){
         ImageView res = (ImageView) findViewById(R.id.imageView);
-        
+
+
         res.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
