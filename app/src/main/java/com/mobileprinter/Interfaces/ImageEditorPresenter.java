@@ -1,5 +1,6 @@
 package com.mobileprinter.Interfaces;
 
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
 
@@ -10,6 +11,7 @@ import android.net.Uri;
 
 public interface ImageEditorPresenter extends Presenter{
 
+    void loadImage(Bitmap b);
     void loadImage(Uri uri);
     void editButtonClick();
     void cutButtonClick();
@@ -27,4 +29,6 @@ public interface ImageEditorPresenter extends Presenter{
     void touch(int x, int y);
     void release(int x, int y);
     void move(Point to);
+
+    void create();
 }

@@ -63,22 +63,23 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
     private EditScreenRouter router;
 
     @Override
+    public void loadImage(Bitmap b) {
+
+        current = b;
+
+        //update(b);
+    }
+
+    @Override
     public void loadImage(Uri uri) {
 
         Bitmap b = null;
 
         try {
+
             b = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
 
-            current = b;
-
-            reset();
-
-            screen.setImage(b);
-
-            for(BaseState state : states.values()){
-                state.update(current);
-            }
+            update(b);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -180,6 +181,16 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
         }
     }
 
+    @Override
+    public void create() {
+
+        if(current == null){
+            return;
+        }
+
+        update(current);
+    }
+
     private void reset(){
 
         screen.hideOptions();
@@ -201,6 +212,21 @@ public class ImageEditorPresenterImpl implements ImageEditorPresenter, Owner {
         currentState = states.get(state);
 
         currentState.start();
+    }
+    private void update(Bitmap b){
+
+        if(current != null && current != b){
+            current.recycle();
+        }
+        current = b;
+
+        reset();
+
+        screen.setImage(b);
+
+        for(BaseState state : states.values()){
+            state.update(current);
+        }
     }
 
 }

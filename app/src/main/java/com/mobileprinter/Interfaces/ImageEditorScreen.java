@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Влад on 08.11.2016.
  */
 
-public interface ImageEditorScreen {
+public interface ImageEditorScreen extends BaseView{
 
     void showEditButtons();
     void showOptionButtons();

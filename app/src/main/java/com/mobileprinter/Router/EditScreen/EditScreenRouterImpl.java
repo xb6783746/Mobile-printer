@@ -6,34 +6,31 @@ import android.graphics.Bitmap;
 import com.mobileprinter.Interfaces.EditScreenRouter;
 import com.mobileprinter.Interfaces.ScreenHost;
 import com.mobileprinter.Presenter.DitherScreen.DitherScreenPresenterImpl;
+import com.mobileprinter.Router.BaseRouter;
+import com.mobileprinter.Router.DitherScreen.DitherRouterImpl;
 import com.mobileprinter.View.DitherScreen.DitherView;
 
 /**
  * Created by Влад on 13.11.2016.
  */
 
-public class EditScreenRouterImpl implements EditScreenRouter{
+public class EditScreenRouterImpl extends BaseRouter implements EditScreenRouter{
 
 
     public EditScreenRouterImpl(ScreenHost host, Context context) {
-        this.host = host;
-        this.context = context;
+        super(host, context);
     }
-
-    private ScreenHost host;
-    private Context context;
-
-
 
     @Override
     public void openDitheringScreen(Bitmap image) {
 
         DitherView view = new DitherView();
-        DitherScreenPresenterImpl presenter = new DitherScreenPresenterImpl(view, null, image);
+        DitherRouterImpl router = new DitherRouterImpl(host, context);
+        DitherScreenPresenterImpl presenter = new DitherScreenPresenterImpl(view, router, image);
 
         view.setPresenter(presenter);
 
-        host.attach(view);
+        host.attach(view, view);
         //presenter.start();
 
     }

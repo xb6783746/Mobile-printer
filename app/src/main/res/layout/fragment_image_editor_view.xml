@@ -49,11 +49,10 @@
         <Button
             app:srcCompat="@color/cardview_shadow_end_color"
             android:id="@+id/openButton"
-            style="@style/Widget.AppCompat.ImageButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/ic_add_a_photo_black_48dp" />
+            android:background="@drawable/button" />
 
         <Button
             android:layout_width="50dp"

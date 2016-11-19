@@ -84,6 +84,8 @@ public class ImageEditorView extends Fragment implements ImageEditorScreen{
         //presenter = new ImageEditorPresenterImpl(this, this);
 
         seekBar.setVisibility(View.INVISIBLE);
+
+        presenter.create();
     }
 
     private void initControls(View where) {
@@ -141,7 +143,7 @@ public class ImageEditorView extends Fragment implements ImageEditorScreen{
                 .beginTransaction()
                 .remove(acceptCancelButtonsFragment)
                 .remove(optionButtonsFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     @Override
@@ -158,11 +160,12 @@ public class ImageEditorView extends Fragment implements ImageEditorScreen{
 
     @Override
     public void setImage(Bitmap b) {
-        if (tmp != null) {
+        current = b;
+
+        if(tmp != null){
             tmp.recycle();
         }
 
-        current = b;
         tmp = current.copy(Bitmap.Config.ARGB_8888, true);
 
         imageView.setImageBitmap(b);
@@ -188,6 +191,8 @@ public class ImageEditorView extends Fragment implements ImageEditorScreen{
     @Override
     public void drawRect(Rect rect, List<Point> dots) {
 
+
+
         Canvas canvas = new Canvas(tmp);
 
         canvas.drawBitmap(current, new Matrix(), null);
@@ -206,6 +211,8 @@ public class ImageEditorView extends Fragment implements ImageEditorScreen{
         }
 
         imageView.setImageBitmap(tmp);
+
+        //tmp.recycle();
     }
     @Override
     public void hideRect() {
@@ -409,8 +416,12 @@ public class ImageEditorView extends Fragment implements ImageEditorScreen{
     }
 
 
+    @Override
+    public void back() {
 
+    }
 
-
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+    }
 }

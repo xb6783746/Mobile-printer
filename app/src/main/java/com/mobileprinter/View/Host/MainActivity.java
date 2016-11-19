@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
+import com.mobileprinter.Interfaces.BaseView;
 import com.mobileprinter.Interfaces.ScreenHost;
 import com.mobileprinter.Presenter.EditScreen.ImageEditorPresenterImpl;
 import com.mobileprinter.R;
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements ScreenHost {
 
     private FrameLayout host;
     private Fragment current;
+    private BaseView view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements ScreenHost {
     }
 
     @Override
-    public void attach(Fragment fragment) {
+    public void attach(Fragment fragment, BaseView view) {
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements ScreenHost {
         }
 
         current = fragment;
+        this.view = view;
 
         fragmentTransaction.add(R.id.host, fragment).commit();
     }
@@ -50,7 +53,14 @@ public class MainActivity extends AppCompatActivity implements ScreenHost {
         ImageEditorPresenterImpl presenter = new ImageEditorPresenterImpl(fragment, this, router);
         fragment.setPresenter(presenter);
 
-        attach(fragment);
+        attach(fragment, fragment);
         presenter.start();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+
+        view.back();
     }
 }

@@ -1,6 +1,7 @@
 package com.mobileprinter.View.DitherScreen;
 
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,11 +24,13 @@ public class DitherView extends Fragment implements DitherScreen{
 
     public DitherView() {
         // Required empty public constructor
+
     }
 
 
     private DitherScreenPresenter presenter;
     private ImageView imageView;
+    private ProgressDialog dialog;
 
     public void setPresenter(DitherScreenPresenter presenter) {
         this.presenter = presenter;
@@ -43,6 +46,9 @@ public class DitherView extends Fragment implements DitherScreen{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        dialog = new ProgressDialog(getActivity());
+        dialog.setMessage(getString(R.string.printingMessage));
 
         initControls(view);
 
@@ -85,5 +91,24 @@ public class DitherView extends Fragment implements DitherScreen{
     public void setImage(Bitmap b) {
 
         imageView.setImageBitmap(b);
+    }
+
+    @Override
+    public void back() {
+        presenter.back();
+    }
+
+    @Override
+    public void openProgressDialog(){
+
+        getActivity().runOnUiThread(() -> dialog.show());
+
+       //dialog.show();
+    }
+    @Override
+    public void closeProgressDialog(){
+
+        getActivity().runOnUiThread(() -> dialog.dismiss());
+        // dialog.show();
     }
 }

@@ -8,5 +8,5 @@ import android.app.Fragment;
 
 public interface ScreenHost {
 
-    void attach(Fragment fragment);
+    void attach(Fragment fragment, BaseView view);
 }

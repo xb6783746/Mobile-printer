@@ -12,5 +12,7 @@ public interface DitherScreenPresenter extends Presenter{
     void atkinsonDithering();
     void stuckiDithering();
 
+    void back();
+
     void print();
 }

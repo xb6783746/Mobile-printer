@@ -7,57 +7,71 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
-        android:layout_alignParentTop="true"
+        android:layout_height="400dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_height="400dp">
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center">
 
         <ImageView
-            android:layout_width="match_parent"
-            app:srcCompat="@color/cardview_shadow_end_color"
             android:id="@+id/ditherImageView"
-            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_height="match_parent" />
+            android:layout_alignParentTop="true"
+            app:srcCompat="@color/cardview_shadow_end_color" />
 
     </android.support.v7.widget.CardView>
 
-    <LinearLayout
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:id="@+id/mainButtons"
-        android:gravity="center"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
-        <Button
-            android:text="FS"
-            android:id="@+id/floydSteinbergDitheringButton"
-            android:layout_height="50dp"
-            android:layout_width="wrap_content" />
-
-        <Button
-            android:text="ATK"
-            android:layout_height="50dp"
-            android:id="@+id/atkinsonDitheringButton"
-            android:layout_width="wrap_content" />
-
-        <Button
-            android:text="STC"
-            android:layout_height="50dp"
-            android:id="@+id/stuckiDitheringButton"
-            android:layout_width="wrap_content" />
-
-        <Button
-            android:text="prnt"
+        <LinearLayout
+            android:id="@+id/mainButtons"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:id="@+id/printDitheredButton" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <Button
+                android:id="@+id/floydSteinbergDitheringButton"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="floyd Steinberg"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
+            <Button
+                android:id="@+id/atkinsonDitheringButton"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="atkinson"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
+            <Button
+                android:id="@+id/stuckiDitheringButton"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="stucki"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
+            <Button
+                android:text="print"
+                android:layout_width="109dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/printDitheredButton"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
 
 </RelativeLayout>
